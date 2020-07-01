@@ -5,8 +5,11 @@ package fr.diginamic.jdbc.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -19,8 +22,37 @@ import fr.diginamic.jdbc.entites.Fournisseur;
 public class FournisseurDaoJdbc implements FournisseurDao {
 
 	@Override
-	public List<Fournisseur> extraire() {
-		return null;
+	public List<Fournisseur> extraire() throws ClassNotFoundException, SQLException {
+		ResourceBundle database = ResourceBundle.getBundle("database");
+
+		Class.forName(database.getString("database.driver"));
+		List<Fournisseur> list = null;
+
+		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
+				database.getString("database.user"), database.getString("database.pass"));) {
+
+			maConnexion.setAutoCommit(false);
+			
+			String sql = "SELECT * FROM FOURNISSEUR";
+
+			try (Statement monStatement = maConnexion.createStatement();
+					ResultSet curseur = monStatement.executeQuery(sql);) {
+
+				list = new ArrayList<>();
+
+				while (curseur.next()) {
+					list.add(new Fournisseur(curseur.getInt(1), curseur.getString(2)));
+				}
+
+				System.out.println(list);
+
+				maConnexion.commit();
+			} catch (SQLException e) {
+				maConnexion.rollback();
+			}
+		}
+		
+		return list;
 	}
 
 	@Override
@@ -32,9 +64,15 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
 
-			Statement monStatement = maConnexion.createStatement();
-			int nb = monStatement.executeUpdate("INSERT INTO FOURNISSEUR(ID, NOM) VALUES (" + fournisseur.getId()
-					+ ", '" + fournisseur.getNom() + "')");
+//			Statement monStatement = maConnexion.createStatement();
+//			int nb = monStatement.executeUpdate("INSERT INTO FOURNISSEUR(ID, NOM) VALUES (" + fournisseur.getId()
+//					+ ", '" + fournisseur.getNom() + "')");
+			
+			String sql = "INSERT INTO FOURNISSEUR(ID, NOM) VALUES (?, ?)";
+			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
+			pstatement.setInt(1, fournisseur.getId());
+			pstatement.setString(2, fournisseur.getNom());
+			int nb = pstatement.executeUpdate();
 
 			System.out.println(nb);
 			maConnexion.close();
@@ -50,9 +88,15 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
 
-			Statement monStatement = maConnexion.createStatement();
-			nb = monStatement.executeUpdate("UPDATE FOURNISSEUR SET NOM='"+nouveauNom+"' Where NOM='"+ancienNom+"'");
-
+//			Statement monStatement = maConnexion.createStatement();
+//			nb = monStatement.executeUpdate("UPDATE FOURNISSEUR SET NOM='"+nouveauNom+"' Where NOM='"+ancienNom+"'");
+			
+			String sql = "UPDATE FOURNISSEUR SET NOM=? Where NOM=?";
+			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
+			pstatement.setString(1, nouveauNom);
+			pstatement.setString(2, ancienNom);
+			nb = pstatement.executeUpdate();
+			
 			System.out.println(nb);
 			maConnexion.close();
 		}
@@ -69,9 +113,14 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
 
-			Statement monStatement = maConnexion.createStatement();
-			int nb = monStatement.executeUpdate("DELETE FROM FOURNISSEUR WHERE ID="+fournisseur.getId());
-
+//			Statement monStatement = maConnexion.createStatement();
+//			int nb = monStatement.executeUpdate("DELETE FROM FOURNISSEUR WHERE ID="+fournisseur.getId());
+			
+			String sql = "DELETE FROM FOURNISSEUR WHERE ID=?";
+			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
+			pstatement.setInt(1, fournisseur.getId());
+			int nb = pstatement.executeUpdate();
+			
 			System.out.println(nb);
 			maConnexion.close();
 			efface = true;

@@ -21,8 +21,8 @@ public class TestInsertion {
 	 * @throws SQLException
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		// il faut dédoubler la quote pour que ça marche
-		Fournisseur f = new Fournisseur(4, "L''espace création");
+		// il faut dédoubler la quote pour que ça marche et avec les preparedStatement il ne faut plus dédoubler la quote
+		Fournisseur f = new Fournisseur(4, "L'espace création");
 		FournisseurDaoJdbc fdj = new FournisseurDaoJdbc();
 		fdj.insert(f);
 	}
