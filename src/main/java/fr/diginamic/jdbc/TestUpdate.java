@@ -21,6 +21,7 @@ public class TestUpdate {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		FournisseurDaoJdbc fdj = new FournisseurDaoJdbc();
+		Class.forName(fdj.getDatabase().getString("database.driver"));
 		fdj.update("L'espace création", "Le jeu");
 	}
 }

@@ -23,6 +23,7 @@ public class TestDelete {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		Fournisseur f = new Fournisseur(4, "La maison du jeu");
 		FournisseurDaoJdbc fdj = new FournisseurDaoJdbc();
+		Class.forName(fdj.getDatabase().getString("database.driver"));
 		fdj.delete(f);
 	}
 }
