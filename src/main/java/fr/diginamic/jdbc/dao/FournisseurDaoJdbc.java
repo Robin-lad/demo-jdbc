@@ -64,9 +64,6 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
 
-//			Statement monStatement = maConnexion.createStatement();
-//			int nb = monStatement.executeUpdate("INSERT INTO FOURNISSEUR(ID, NOM) VALUES (" + fournisseur.getId()
-//					+ ", '" + fournisseur.getNom() + "')");
 			
 			String sql = "INSERT INTO FOURNISSEUR(ID, NOM) VALUES (?, ?)";
 			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
@@ -87,9 +84,6 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		int nb = 0;
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
-
-//			Statement monStatement = maConnexion.createStatement();
-//			nb = monStatement.executeUpdate("UPDATE FOURNISSEUR SET NOM='"+nouveauNom+"' Where NOM='"+ancienNom+"'");
 			
 			String sql = "UPDATE FOURNISSEUR SET NOM=? Where NOM=?";
 			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
@@ -113,9 +107,6 @@ public class FournisseurDaoJdbc implements FournisseurDao {
 		try (Connection maConnexion = DriverManager.getConnection(database.getString("database.url"),
 				database.getString("database.user"), database.getString("database.pass"));) {
 
-//			Statement monStatement = maConnexion.createStatement();
-//			int nb = monStatement.executeUpdate("DELETE FROM FOURNISSEUR WHERE ID="+fournisseur.getId());
-			
 			String sql = "DELETE FROM FOURNISSEUR WHERE ID=?";
 			PreparedStatement pstatement = maConnexion.prepareStatement(sql);
 			pstatement.setInt(1, fournisseur.getId());
